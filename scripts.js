@@ -101,6 +101,7 @@ async function sendMessage(e)
     if (response.ok) {
       const newMsg = await response.json();
       renderMessages([newMsg]);
+      lastMessageTime = Date.now();
       messageInput.value = "";
     } else {
       const error = await response.json();
@@ -312,11 +313,16 @@ document.addEventListener('DOMContentLoaded', () => {
 loadUsers()
 loadMessages()
 
+// Сохраняем ID интервала, чтобы избежать множественных полингов
+let pollInterval = null;
 
 messageForm.addEventListener("submit",sendMessage)
 btnRegister.addEventListener("click",registerUser)
 btnLogin.addEventListener("click",loginUser)
 btnLogout.addEventListener("click",logoutUser)
 
-setInterval(loadNewMessages, 10000)
+// Запускаем полинг только один раз
+if (!pollInterval) {
+    pollInterval = setInterval(loadNewMessages, 10000);
+}
 
