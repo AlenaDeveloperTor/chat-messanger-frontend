@@ -25,7 +25,7 @@ async function loadUsers()
     const currentRoom = sessionStorage.getItem("currentRoom") || "general";
     const response = await fetch(`${API_URL}/rooms/${currentRoom}/users`)
     const data = await response.json()
-    renderUsers(data.active_users)
+    renderUsers(data.active_users) 
 }
 
 function renderUsers(data)
@@ -42,11 +42,13 @@ function renderUsers(data)
 
 async function loadMessages()
 { 
-  const currentRoom = sessionStorage.getItem("currentRoom") || "general";
+    const currentRoom = sessionStorage.getItem("currentRoom") || "general";
     const response = await fetch(`${API_URL}/rooms/${currentRoom}/messages`)
     const data = await response.json()
     chatWindow.innerHTML = '';
     renderMessages(data)
+    lastMessageTime = Date.now();
+
 }
 function renderMessages(msgs)
 {
@@ -272,8 +274,9 @@ async function loadNewMessages()
             if (messages.length > 0) {
                 renderMessages(messages);
             }
-            lastMessageTime = Date.now();
+           
         }
+        lastMessageTime = Date.now();
     } catch (error) {
         console.error('Ошибка при загрузке новых сообщений:', error);
     }
