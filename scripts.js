@@ -56,7 +56,7 @@ function renderMessages(msgs)
 
             const messageDiv=document.createElement('div');
             let style_msg="other-message"
-            if (m.user_id==sessionStorage.getItem("currentUser"))
+            if (m.user_id==currentUserId)
                 {style_msg="my-message"}
             messageDiv.classList.add('message',style_msg)
             messageDiv.innerHTML=`<div class="sender">${m.username}</div><div>${m.text}</div><div>${m.timestamp} </div>`
@@ -196,7 +196,6 @@ async function registerUser(e)
         const userData = await response.json();
         currentUserId = userData.id;
         currentUsername = userData.name;
-        lastMessageTime = Date.now();
         await joinRoom('general', currentUserId);
         sessionStorage.setItem("currentUser",currentUserId)
         await loadUsers()
@@ -242,7 +241,7 @@ async function loginUser(e)
             const userData = responseData.user;
             currentUserId = userData.id;
             currentUsername = userData.name;
-            lastMessageTime = Date.now();
+      
             sessionStorage.setItem("currentUser",currentUserId)
             // Присоединяемся к комнате general
             await joinRoom('general', currentUserId);
@@ -272,8 +271,8 @@ async function loadNewMessages()
             const messages = await response.json();
             if (messages.length > 0) {
                 renderMessages(messages);
-                lastMessageTime = Date.now();
             }
+            lastMessageTime = Date.now();
         }
     } catch (error) {
         console.error('Ошибка при загрузке новых сообщений:', error);
