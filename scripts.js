@@ -12,6 +12,7 @@ const roomNameDisplay = document.getElementById('room-name');
 let currentUserId = sessionStorage.getItem("currentUser");
 let currentUsername = '';
 let lastMessageTime = Date.now();
+const API_URL = APP_CONFIG.API_URL || 'http://localhost:8000';
 
 roomButtons.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -22,7 +23,7 @@ roomButtons.forEach(btn => {
 async function loadUsers()
 {
     const currentRoom = sessionStorage.getItem("currentRoom") || "general";
-    const response = await fetch(`http://127.0.0.1:8000/rooms/${currentRoom}/users`)
+    const response = await fetch(`${API_URL}/rooms/${currentRoom}/users`)
     const data = await response.json()
     renderUsers(data.active_users)
 }
@@ -42,7 +43,7 @@ function renderUsers(data)
 async function loadMessages()
 { 
   const currentRoom = sessionStorage.getItem("currentRoom") || "general";
-    const response = await fetch(`http://127.0.0.1:8000/rooms/${currentRoom}/messages`)
+    const response = await fetch(`${API_URL}/rooms/${currentRoom}/messages`)
     const data = await response.json()
     chatWindow.innerHTML = '';
     renderMessages(data)
@@ -95,7 +96,7 @@ async function sendMessage(e)
   }
 
   try {
-    const response = await fetch("http://localhost:8000/messages", options)
+    const response = await fetch(`${API_URL}/messages`, options)
     
     if (response.ok) {
       const newMsg = await response.json();
@@ -115,7 +116,7 @@ async function sendMessage(e)
 
 async function joinRoom(roomName, userId) {
 
-        const response = await fetch(`http://localhost:8000/rooms/${roomName}/join`, {
+        const response = await fetch(`${API_URL}/rooms/${roomName}/join`, {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ user_id: userId })
@@ -133,7 +134,7 @@ async function joinRoom(roomName, userId) {
 // Покинуть комнату
 async function leaveRoom(roomName, userId) {
   
-        const response = await fetch(`http://localhost:8000/rooms/${roomName}/leave`, {
+        const response = await fetch(`${API_URL}/rooms/${roomName}/leave`, {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ user_id: userId })
@@ -188,7 +189,7 @@ async function registerUser(e)
     headers: { 'Content-Type': 'application/json' },
     body:  JSON.stringify(msg)
   }
-  const response = await fetch("http://localhost:8000/register",options)
+  const response = await fetch(`${API_URL}/register`, options)
   if(response.ok)
   {     
         const userData = await response.json();
@@ -233,7 +234,7 @@ async function loginUser(e)
     headers: { 'Content-Type': 'application/json' },
     body:  JSON.stringify(msg)
   }
-  const response = await fetch("http://localhost:8000/login",options)
+  const response = await fetch(`${API_URL}/login`, options)
   if(response.ok)
   {
             const responseData = await response.json();
@@ -265,7 +266,7 @@ async function loadNewMessages()
 {
     try {
         const currentRoom = sessionStorage.getItem("currentRoom") || "general";
-        const response = await fetch(`http://localhost:8000/rooms/${currentRoom}/messages/poll?since=${lastMessageTime}`);
+        const response = await fetch(`${API_URL}/rooms/${currentRoom}/messages/poll?since=${lastMessageTime}`);
         if (response.ok) {
             const messages = await response.json();
             if (messages.length > 0) {
